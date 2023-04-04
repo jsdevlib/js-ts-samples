@@ -1,0 +1,76 @@
+version: "3.7"
+
+services:
+  app:
+    image: gateway-api:v1
+    container_name: gateway-api
+    build:
+      context: ./gateway-api
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - 80:3000
+    depends_on:
+      - mysqldb
+      - rabbitmq
+    restart: always
+    networks:
+      - ms_nestjs
+
+  organizations-api:
+    image: organizations-api:v1
+    container_name: organizations-api
+    build:
+      context: ./organizations-api
+      dockerfile: Dockerfile
+    env_file: .env
+    depends_on:
+      - mysqldb
+      - rabbitmq
+    restart: always
+    networks:
+      - ms_nestjs
+
+  users-api:
+    image: users-api:v1
+    container_name: users-api
+    build:
+      context: ./users-api
+      dockerfile: Dockerfile
+    env_file: .env
+    depends_on:
+      - mysqldb
+      - rabbitmq
+    restart: always
+    networks:
+      - ms_nestjs
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rmq
+    expose:
+      - 5672
+      - 15672
+    restart: always
+    networks:
+      - ms_nestjs
+
+  mysqldb:
+    image: mysql:latest
+    container_name: mysqldb
+    restart: always
+    environment:
+      - MYSQL_DATA_DIR=/data/db
+      - MYSQL_LOG_DIR=/dev/null
+    volumes:
+      - mysqldb:/data/db
+    expose:
+      - 27017
+    networks:
+      - ms_nestjs
+
+volumes:
+  mysqldb:
+
+networks:
+  ms_nestjs:
