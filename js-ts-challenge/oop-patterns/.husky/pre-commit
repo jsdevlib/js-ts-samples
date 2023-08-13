@@ -1,8 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-export FORCE_COLOR=1
-
-npm run test:coverage
-npm run format
-npm run lint
